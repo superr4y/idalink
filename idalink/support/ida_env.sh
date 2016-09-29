@@ -18,6 +18,10 @@
 
 export TERM=xterm
 
-IDA=$1
+#IDA="/home/amoco/idadir/idaq.exe"
+IDA="$1"
 shift
-$IDA "$@"
+wine $IDA "$@"
+#wine $IDA -A -S"/home/amoco/git/idalink/idalink/server.py 41293 metapc" -L"/tmp/idalink-41293.log" -pmetapc /home/amoco/samples/mytest
+
+#tmux new-session -d -s idalink-41293 /home/amoco/git/idalink/idalink/support/ida_env.sh /home/amoco/idadir/idaq.exe -S/home/amoco/git/idalink/idalink/server.py 41293 metapc -L"/tmp/idalink-41293.log" -pmetapc /home/amoco/samples/mytest

@@ -12,7 +12,7 @@ idalink_log.addHandler(logging.StreamHandler())
 idalink_log.setLevel(logging.DEBUG)
 
 # Let's do some testing with idalink!
-with idalink('./tests/bash', 'idal64') as ida:
+with idalink('/home/amoco/samples/mytest', '/home/amoco/idadir/idaq.exe') as ida:
     # use idc
     s = ida.idc.ScreenEA()
     print('Default ScreenEA is {:x}'.format(s))
@@ -30,4 +30,4 @@ with idalink('./tests/bash', 'idal64') as ida:
     # access IDA memory in a dict way
     print('Accessing memory directly')
     functions = next(ida.idautils.Functions())
-    print(' - Byte at {:x} is {}'.format(s, ida.memory[s]))
+    #print(' - Byte at {:x} is {}'.format(s, ida.memory[s]))

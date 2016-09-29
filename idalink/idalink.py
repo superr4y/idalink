@@ -34,7 +34,7 @@ import warnings
 from rpyc import classic as rpyc_classic
 
 # Local imports
-from .memory import CachedIDAMemory, CachedIDAPermissions
+from memory import CachedIDAMemory, CachedIDAPermissions
 
 
 # Constants
@@ -99,7 +99,8 @@ def ida_spawn(filename, ida_path, port=18861, mode='oneshot',
         command_prefix = None
     else:
         ida_env_script = os.path.join(MODULE_DIR, 'support', 'ida_env.sh')
-        command_prefix = ['screen', '-S', 'idalink-%d' % port, '-d', '-m']
+        #command_prefix = ['screen', '-S', 'idalink-%d' % port, '-d', '-m']
+        command_prefix = ['tmux', 'new-session', '-d', '-s', 'idalink-%d' % port]
 
     if sys.platform == "darwin":
         # If we are running in a virtual environment, which we should, we need
@@ -112,16 +113,16 @@ def ida_spawn(filename, ida_path, port=18861, mode='oneshot',
     command = [
         ida_env_script,
         ida_realpath,
-        '-M',
+        #'-M',
         '-A',
-        '-S%s %d %s' % (server_script, port, mode),
+        '-S"%s %d %s"' % (server_script, port, mode),
         '-L"%s"' % logfile,
         '-p%s' % processor_type,
         file_realpath,
     ]
 
     if command_prefix:
-        command = command_prefix + command
+        command = command_prefix + [" ".join(command)]
 
     LOG.debug('IDA command is %s', ' '.join(command))
     return subprocess.call(command)

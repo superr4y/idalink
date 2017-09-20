@@ -34,7 +34,7 @@ import warnings
 from rpyc import classic as rpyc_classic
 
 # Local imports
-from .memory import CachedIDAMemory, CachedIDAPermissions
+#from memory import CachedIDAMemory, CachedIDAPermissions
 
 
 # Constants
@@ -99,7 +99,8 @@ def ida_spawn(filename, ida_path, port=18861, mode='oneshot',
         command_prefix = None
     else:
         ida_env_script = os.path.join(MODULE_DIR, 'support', 'ida_env.sh')
-        command_prefix = ['screen', '-S', 'idalink-%d' % port, '-d', '-m']
+        #command_prefix = ['screen', '-S', 'idalink-%d' % port, '-d', '-m']
+        command_prefix = ['tmux', 'new-session', '-d', '-s', 'idalink-%d' % port]
 
     if sys.platform == "darwin":
         # If we are running in a virtual environment, which we should, we need
@@ -112,16 +113,16 @@ def ida_spawn(filename, ida_path, port=18861, mode='oneshot',
     command = [
         ida_env_script,
         ida_realpath,
-        '-M',
+        #'-M',
         '-A',
-        '-S%s %d %s' % (server_script, port, mode),
+        '-S"%s %d %s"' % (server_script, port, mode),
         '-L"%s"' % logfile,
         '-p%s' % processor_type,
         file_realpath,
     ]
 
     if command_prefix:
-        command = command_prefix + command
+        command = command_prefix + [" ".join(command)]
 
     LOG.debug('IDA command is %s', ' '.join(command))
     return subprocess.call(command)
@@ -139,8 +140,8 @@ class RemoteIDALink(object):
         self.idaapi = __import__('idaapi')
         self.idautils = __import__('idautils')
 
-        self.memory = CachedIDAMemory(self)
-        self.permissions = CachedIDAPermissions(self)
+        #self.memory = CachedIDAMemory(self)
+        #self.permissions = CachedIDAPermissions(self)
 
 
 class IDALink(object):
@@ -159,29 +160,29 @@ class IDALink(object):
         self.pull_memory = pull_memory
         self._permissions = None
 
-    @property
-    def memory(self):
-        if self._memory is None:
-            self._memory = CachedIDAMemory(self)
+    #@property
+    #def memory(self):
+    #    if self._memory is None:
+    #        #self._memory = CachedIDAMemory(self)
 
-            if self.pull_memory:
-                self._memory.pull_defined()
+    #        if self.pull_memory:
+    #            self._memory.pull_defined()
 
-        return self._memory
+    #    return self._memory
 
-    @memory.deleter
-    def memory(self):
-        self._memory = None
+    #@memory.deleter
+    #def memory(self):
+    #    self._memory = None
 
-    @property
-    def permissions(self):
-        if self._permissions is None:
-            self._permissions = CachedIDAPermissions(self)
-        return self._permissions
+    #@property
+    #def permissions(self):
+    #    if self._permissions is None:
+    #        self._permissions = CachedIDAPermissions(self)
+    #    return self._permissions
 
-    @permissions.deleter
-    def permissions(self):
-        self._permissions = None
+    #@permissions.deleter
+    #def permissions(self):
+    #    self._permissions = None
 
 
 class idalink(object):

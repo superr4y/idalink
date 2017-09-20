@@ -35,7 +35,7 @@ if __name__ == '__main__':
     print('Received arguments: {}'.format(idc.ARGV))
 
     port = int(idc.ARGV[1]) if idc.ARGV[1:] else 18861
-    mode = idc.ARGV[2] if idc.ARGV[2:] else 'oneshot'
+    mode = idc.ARGV[2] if idc.ARGV[2:] else 'threaded'
 
     # :note: For speed, we don't want to idc.Wait() here,
     #        but you might want to call it in your code
